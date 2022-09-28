@@ -1,1 +1,0 @@
-# My-Configuration-NixOS
