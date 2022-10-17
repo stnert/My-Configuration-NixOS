@@ -79,7 +79,7 @@
 
   # Enable the GNOME Desktop Environment.
   services.xserver.desktopManager.gnome.enable = true;
-  services.xserver.displayManager.gdm.enable = false;
+  services.xserver.displayManager.gdm.enable = true;
 
   environment.gnome.excludePackages = with pkgs.gnome; [
     totem # video player
@@ -147,7 +147,7 @@
         librewolf-wayland
         chromium
         thunderbird-wayland
-        deltachat-desktop
+        #deltachat-desktop
         tdesktop
         onlyoffice-bin
         deluge
@@ -165,6 +165,7 @@
         libva-utils
         avahi
         busybox
+	docker
         microcodeIntel
         x265
         libde265
@@ -254,6 +255,8 @@
   services.postgresql.enable = false;
 
   programs.gnupg.agent.enable = true;
+  
+  virtualisation.docker.enable = true;
 
   services.jellyfin.enable = true;
 
