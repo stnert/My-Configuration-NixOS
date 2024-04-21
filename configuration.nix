@@ -22,7 +22,7 @@
   boot.kernel.sysctl."net.ipv4.conf.all.send_redirects" = false;
   boot.kernel.sysctl."net.ipv4.conf.default.send_redirects" = false;
   boot.kernel.sysctl."net.ipv4.icmp_echo_ignore_broadcasts" = true;
-  boot.kernel.sysctl."net.core.bpf_jit_enable" = false;
+  boot.kernel.sysctl."net.core.bpf_jit_enable" = true;
   boot.kernel.sysctl."kernel.ftrace_enabled" = false;
   boot.kernel.sysctl."net.ipv4.conf.all.accept_redirects" = false;
   boot.kernel.sysctl."net.ipv4.conf.all.secure_redirects" = false;
@@ -31,7 +31,8 @@
   boot.kernel.sysctl."net.ipv6.conf.all.accept_redirects" = false;
   boot.kernel.sysctl."net.ipv6.conf.default.accept_redirects" = false;
   boot.kernel.sysctl."net.ipv4.conf.all.log_martians" = true;
-  boot.kernel.sysctl."net.ipv4.conf.all.rp_filter" = "1";
+  boot.kernel.sysctl."net.ipv4.conf.all.rp_filter" = true;
+  
 
   # Optimising the store 
   nix.optimise.automatic = true;
@@ -75,10 +76,15 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
+  # Enable GNOME Desktop Env. 
+  #services.xserver.displayManager.gdm.enable = true;
+  #services.xserver.desktopManager.gnome.enable = true;
+
   # Enable the KDE Plasma Env.
-  services.xserver.displayManager.sddm.enable = true;
-  services.xserver.desktopManager.plasma5.enable = true;
-  services.xserver.displayManager.defaultSession = "plasmawayland";
+  services.displayManager.sddm.enable = true;
+  services.desktopManager.plasma6.enable = true;
+  services.displayManager.defaultSession = "plasma";
+  #services.xserver.displayManager.defaultSession = "plasma";
 
   # Configure console keymap
   console.keyMap = "br-abnt2";
@@ -113,7 +119,7 @@
   users.users.tr3nts = {
     isNormalUser = true;
     description = "tr3nts";
-    extraGroups = [ "networkmanager" "wheel" "libvirtd" "docker"];
+    extraGroups = [ "networkmanager" "wheel"];
     packages = with pkgs; [
       # firefox
       opensnitch
@@ -123,10 +129,30 @@
     ];
   };
 
-  environment.plasma5.excludePackages = with pkgs.libsForQt5; [
-    elisa
-    plasma-browser-integration
-  ];
+ # environment.systemPackages = with pkgs; [
+ # kdePackages.kdeconnect-kde
+ # ];
+
+# environment.gnome.excludePackages = (with pkgs; [
+ # gnome-photos
+ # gnome-tour
+#]) ++ (with pkgs.gnome; [
+#  cheese # webcam tool
+#  epiphany # web browser
+#  geary # email reader
+#  evince # document viewer
+#  gnome-characters
+#  totem # video player
+#  tali # poker game
+#  iagno # go game
+#  hitori # sudoku game
+#  atomix # puzzle game
+#]);
+
+#  environment.plasma6.excludePackages  [
+#    elisa
+ #   plasma-browser-integration
+ # ];
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -149,7 +175,7 @@
   #services.qemuGuest.enable = true;
 
   # Enable KDEConnect 
-  programs.kdeconnect.enable = true;
+ # programs.kdeconnect.enable = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -171,13 +197,19 @@
   # experimental-features = nix-command flakes
   # '';
 
+  # Enable Taiscale Recorded Future 
+  services.tailscale.enable = true;
+
+  # Enable Mullvad VPN 
+  services.mullvad-vpn.enable = true;
+
   # Enable the OpenSSH daemon.
   #services.openssh.enable = false;  
 
   # Enable firejail
   #programs.firejail.enable = true;
 
-  #Enable Privoxy Junkware 
+  # Enable Privoxy Junkware 
   services.privoxy.enable = true;
 
   # Enable antivirus clamav and  keep the signatures' database updated
@@ -212,70 +244,62 @@
     home.packages = with pkgs; [
       keepassxc
       nextcloud-client
+      mullvad-vpn
+      tailscale
       nmap
-      nuclei
+      lanzaboote-tool
+      sbctl
       naabu
+      flameshot
       nixpkgs-review
+      nixfmt-classic
       clamav
-      clamtk
       redshift
+      okular
       wireshark
       tor-browser
+      mullvad-browser
       firefox
-      ungoogled-chromium
+      chromium
       opensnitch
       opensnitch-ui
-      stacer
-      openntpd_nixos
-      mitmproxy
+      ntpd-rs
       zap
-      crowdsec
       freetube
       mixxx
-      distrobox
-      nftables
       cron
       libreddit
       socialscan
+      niv
+      tlp
       wayland
       metadata-cleaner
       privoxy
-      blocky
-      hblock
       pdns
       easyeffects
       ventoy-full
       lsp-plugins
-      deltachat-desktop
       jami
       signal-desktop
       element-desktop
-      whatsapp-for-linux
+      thelounge
       hash-identifier
-      ksystemlog
-      kdeconnect
       qbittorrent
+      sabnzbd
+      radarr
       bcache-tools
       toybox
-      jq
       auto-cpufreq
       tdesktop
-      tutanota-desktop
       thunderbird
       onlyoffice-bin
-      docker
-      docker-compose
       gnumake
-      vscodium
       helix
       htop
-      nixfmt
-      vulnix
-      qt6.qtwebengine
-      qt6.full
-      qt6.qtbase
-      qt6.qtwayland
+      btop
+    #  vulnix   // Deprecated since July 2021, check again in July 2024 if project works...
       mesa
+      libvdpau-va-gl
       nano
       git
       python312
@@ -296,6 +320,7 @@
       figlet
       pfetch
       sl
+      smplayer
       mpv
       yt-dlp
       microcodeIntel
@@ -307,15 +332,15 @@
       tldr
       glibc
       gparted
-      kate
       lm_sensors
       fwupd
       fwupd-efi
       qemu_kvm
       valgrind
-      nodejs_20
+      nodejs_21
       czkawka
       intel-ocl
+      intel-graphics-compiler
       vaapi-intel-hybrid
       unbound
       dnscrypt-proxy
